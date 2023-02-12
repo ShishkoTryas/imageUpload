@@ -1,0 +1,31 @@
+version: '3.4'
+
+services:
+  app:
+    image: golang:latest
+    container_name: imageUpload
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+    volumes:
+      - ./.bin/:/root/
+      - ./templates/:/root/templates/
+    env_file:
+      - .env
+
+  db:
+      image: postgres:latest
+      container_name: upload_image
+      environment:
+        - POSTGRES_USER=${DB_USER}
+        - POSTGRES_PASSWORD=${DB_PASSWORD}
+        - POSTGRES_DB=${DB_NAME}
+        - DATABASE_HOST=${DB_HOST}
+      volumes:
+        - ./pgdata:/var/lib/postgresql/data
+      ports:
+        - "5432:5432"
